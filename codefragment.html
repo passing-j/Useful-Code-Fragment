@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>codefragment</title>
+  <style>
+  /*自定义复选框样式*/
+  .demo--label {
+    display: inline-block
+  }
+  .demo--radio {
+    display: none
+  }
+  .demo--radioInput {
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 100%;
+    display: inline-block;
+    height: 16px;
+    vertical-align: middle;
+    width: 16px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .demo--radio:checked + .demo--radioInput:after {
+    background-color: #1AB394;
+    border-radius: 100%;
+    content: "";
+    display: inline-block;
+    height: 11px;
+    margin: 2px;
+    width: 11px
+  }
+  .demo--checkbox.demo--radioInput,
+  .demo--radio:checked + .demo--checkbox.demo--radioInput:after {
+    border-radius: 0
+  }
+
+/*自定义input[type="file"]样式*/
+  input[type="file"]::-webkit-file-upload-button {
+    background-color: #1AB394;
+    color: white;
+    border: 1px solid #1AB394;
+    box-shadow: 1px 1px 1px 0 #C6C6C6;
+    cursor: pointer;
+    outline: none;
+  }
+  input[type="file"]::-webkit-file-upload-button:hover {
+    background-color: #139C80;
+    box-shadow: 0 0 0 0;
+  }
+  .reset-fileinput-bg {
+    background: none;
+    border: none;
+  }
+  </style>
+</head>
+<body>
+<!-- 自定义复选框样式 -->
+  <div>
+    <label class="demo--label">
+      <input class="demo--radio" type="checkbox" name="demo-checkbox1" checked>
+      <span class="demo--checkbox demo--radioInput"></span>
+    </label>
+  </div>
+  <!-- 自定义input[type="file"]样式 -->
+  <input type="file" id="file" class="form-control reset-fileinput-bg">
+
+</body>
+</html>
