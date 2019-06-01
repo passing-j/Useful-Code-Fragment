@@ -1,0 +1,108 @@
+<!-- element-ui 日期联动选择 -->
+<!-- 实现的功能： -->
+<!-- 1.日期组件的开始日期不大于结束日期，开始日期的可选范围不大于结束日期，结束日期的可选范围不小于开始日期并且不超过今天。 -->
+<!-- 2.查询今日 和 查询历史，设置不同的默认日期。 -->
+<!-- 3.开始时间默认当天的 00:00:00, 结束时间默认当天的 23:59:59。 -->
+<template>
+  <div id="page-wrap" v-cloak>
+    <el-form style="margin: 20px;">
+      <el-form-item label="开始时间:">
+        <el-date-picker v-model="startTime" type="datetime" format="yyyy-MM-dd HH:mm:ss" default-time="00:00:00" :picker-options="pickerBeginDateBefore"></el-date-picker>
+      </el-form-item>
+      <el-form-item label="结束时间:">
+        <el-date-picker v-model="endTime" type="datetime" format="yyyy-MM-dd HH:mm:ss" default-time="23:59:59" :picker-options="pickerBeginDateAfter"></el-date-picker>
+      </el-form-item>
+      <div>
+        <el-radio v-model="radio" label="1" @change="selectToday">只查当日</el-radio>
+        <el-radio v-model="radio" label="2" @change="selectHistory">查询历史</el-radio>
+      </div>
+    </el-form>
+  </div>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      startTime: '',
+      endTime: '',
+      radio: '1',
+      // 默认只能选今天的时间
+      pickerBeginDateBefore: {
+        // disabledDate 的参数 time 是日历面板中的开始到今年年底的日期对象  如: Sun Dec 15 2019 00:00:00 GMT+0800 (中国标准时间)(chrome71)
+        disabledDate: (time) => {
+          // 对每一天判断，返回的是不可选的日期范围
+          // time.getTime() 返回某一天 00:00:00 的毫秒数
+          // Date.now() 返回当前时间的毫秒数
+          return time.getTime() + 24 * 3600 * 1000 < Date.now() || time.getTime() > Date.now()
+        }
+      },
+      pickerBeginDateAfter: {
+        disabledDate: (time) => {
+          let beginDateVal = this.startTime;
+          if (beginDateVal) {
+            return time.getTime() + 24 * 3600 * 1000 <= beginDateVal || time.getTime() > Date.now()
+          }
+        }
+      }
+    }
+  },
+  mounted: function() {
+    this.initDate()
+  },
+  methods: {
+    initDate: function() {
+      // 今天00:00:00
+      this.startTime = new Date(this.timeRange(0))
+      // 今天23:59:59
+      this.endTime = new Date(this.timeRange(-1) - 1000)
+    },
+    timeRange: function(day) {
+      // 今天 00:00:00 的毫秒数 减 几天的毫秒数
+      var st = new Date(new Date().toLocaleDateString()).getTime() - day * 24 * 60 * 60 * 1000
+      // 返回毫秒数
+      return st
+    },
+    selectToday: function() {
+      this.pickerBeginDateBefore = {
+        disabledDate: (time) => {
+          return time.getTime() + 24 * 3600 * 1000 < Date.now() || time.getTime() > Date.now()
+        }
+      }
+      this.pickerBeginDateAfter = {
+        disabledDate: (time) => {
+          let beginDateVal = this.startTime;
+          if (beginDateVal) {
+            return time.getTime() + 24 * 3600 * 1000 <= beginDateVal || time.getTime() > Date.now()
+          }
+        }
+      }
+      this.initDate()
+    },
+    selectHistory: function() {
+      this.startTime = new Date(this.timeRange(7))
+      this.endTime = new Date(this.timeRange(0) - 1000)
+
+      this.pickerBeginDateBefore = {
+        disabledDate: (time) => {
+          let beginDateVal = this.endTime
+          if (beginDateVal) {
+            // 今天及今天之后的不可选
+            return time.getTime() > beginDateVal || time.getTime() > Date.now()
+          }
+        }
+      }
+      this.pickerBeginDateAfter = {
+        disabledDate: (time) => {
+          let beginDateVal = this.startTime;
+          if (beginDateVal) {
+            // 开始日期之前的(不包括开始那天) 和今天之后的(包括今天)不可选
+            return time.getTime() + 24 * 3600 * 1000 <= beginDateVal || time.getTime() + 24 * 3600 * 1000 > Date.now()
+          }
+        }
+      }
+    }
+  }
+}
+</script>
+<style>
+</style>
